@@ -1,0 +1,1 @@
+Scaffold-DbContext -Connection Name=RemoteScreenshot -Provider MySql.EntityFrameworkCore -OutputDir Models -Namespace RemoteScreenshot -Context RemoteDesktopContext -DataAnnotations -Force -NoOnConfiguring

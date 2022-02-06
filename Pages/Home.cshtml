@@ -1,0 +1,495 @@
+﻿@page "{handler?}"
+@model RemoteScreenshot.Pages.HomeModel
+
+@Html.AntiForgeryToken()
+
+<h4>Choose a laboratory to monitor</h4>
+<hr />
+
+<form role="form" method="get" asp-page-handler="LabInitial">
+    <input type="text" id="LabId" name="LabId" class="w-50 form-control" placeholder="Laboratory ID" />
+    <button id="btnGet" class="btn border border-1 mt-3" type="submit">Get</button>
+</form>
+<hr />
+
+<!-- This creates initial elements with IDs contructed in a certain way. The initial elements will have their contents filled by a function that gets data from the DB relating to desktop info. -->
+@if (Model.LabDesktops.Count != 0)
+{
+    for (int i = 0; i < Model.LabDesktops.Count; i++)
+    {
+        string desktopDevicesID = $"pDesktopDevices{i}";
+        string desktopNameID = $"pDesktopName{i}";
+
+        <p id="@desktopNameID" class="h5"></p>
+        <p id="@desktopDevicesID"></p>
+    }
+}
+
+<h4>Choose a desktop to shutdown</h4>
+<hr />
+
+<input type="text" id="MachineName" class="w-50 form-control" placeholder="Machine Name" />
+<button id="btnShutdown" class="btn border border-1 mt-3">Shutdown</button>
+
+@if (Model.LabDesktops.Count != 0)
+{
+    foreach (var desktop in Model.LabDesktops)
+    {
+        string statusID = $"p{desktop.DesktopId}";
+        
+        <p id="@statusID"></p>
+    }
+}
+<hr />
+
+<h4>Create an attendance session</h4>
+<hr />
+
+<input type="text" id="Class" class="w-50 form-control" placeholder="Class name" />
+<button id="btnCreate" class="btn border border-1 mt-3">Create</button>
+<hr id="attendances" />
+
+@if (Model.OpenAttendances.Count != 0)
+{
+    foreach (var attendance in Model.OpenAttendances)
+    {
+        <p id="@attendance.AttendanceId">📌 [Class] @attendance.Class [Attendance ID] @attendance.AttendanceId [Session] @attendance.Session</p>
+    }
+}
+<hr />
+
+<h4>Reopen an attendance session</h4>
+<hr />
+
+<input type="text" id="AttendanceIdReopen" class="w-50 form-control" placeholder="Attendance ID" />
+<button id="btnReopen" class="btn border border-1 mt-3">Reopen</button>
+<hr />
+
+<h4>Close an attendance session</h4>
+<hr />
+
+<input type="text" id="AttendanceIdClose" class="w-50 form-control" placeholder="Attendance ID" />
+<button id="btnClose" class="btn border border-1 mt-3">Close</button>
+<hr />
+
+<form method="post" role="form">
+    <button class="btn border border-1 mt-3">Sign out</button>
+</form>
+
+@section Scripts{
+
+    <script type="text/javascript">
+        let interval = 10000;
+
+        setInterval(function () { IntervalUpdate(@Model.LabId) }, interval);
+
+        // onclick event to shutdown a desktop
+        $(function () {
+            $("#btnShutdown").click(function () {
+                if (confirm("Are you sure?")) {
+                    ValidateAndShutdownDesktop($("#MachineName").val(), @Model.LabId);
+                }
+            });
+        });
+
+        // is an event for creating an attendance.
+        $(function () {
+            $("#btnCreate").click(function () {
+                if (confirm("Are you sure?")) {
+                    CreateAttendance();
+                }
+            });
+        });
+
+        // is an event for reopening an attendance.
+        $(function () {
+            $("#btnReopen").click(function () {
+                if (confirm("Are you sure?")) {
+                    ReopenAttendance();
+                }
+            });
+        });
+
+        // is an event for closing an attendance.
+        $(function () {
+            $("#btnClose").click(function () {
+                if (confirm("Are you sure?")) {
+                    CloseAttendance();
+                }
+            });
+        });
+
+        function ShutdownDesktop(machineName) {
+            $.ajax({
+                type: "GET",
+                url: "/Home/Shutdown",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: {
+                    "MachineName": machineName
+                },
+                success: function (response) {
+                    alert(response.message);
+                    console.log(response);
+                },
+                failure: function (response) {
+                    console.log(response.responseText);
+                },
+                error: function (response) {
+                    console.log(response.responseText);
+                }
+            });
+        }
+
+        function IntervalUpdate(labId) {
+            $.ajax({
+                type: "GET",
+                url: "/Home/LabInterval",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: {
+                    "LabId": labId
+                },
+                success: function (response) {
+                    InsertResponseDevices(response);
+                    InsertResponseStatuses(response);
+                    console.log(response);
+                },
+                failure: function (response) {
+                    console.log(response.responseText);
+                },
+                error: function (response) {
+                    console.log(response.responseText);
+                }
+            });
+        }
+
+        function InsertResponseScreenshots(response) {
+            if (response.desktops.length < 1) {
+                // code here
+            } else {
+                for (let i = 0; i < response.desktops.length; i++) {
+                    $("#pTimestamp" + i).html("Timestamp: " + response.screenshots.find((cv) => (cv.desktopId == response.desktops[i].desktopId) ? cv : { "timestamp": "no value found" }).timestamp);
+
+                    $("#img" + i).attr("src", "data:image/jpg;base64," + response.screenshots.find((cv) => (cv.desktopId == response.desktops[i].desktopId) ? cv : { "image": "no value found" }).image);
+
+                    $("#pDesktopName" + i).html("Desktop Name: " + response.desktops[i].name);
+                }
+            }
+        }
+
+        function InsertResponseScreenshotsAndDevices(response) {
+            if (response.desktops.length < 1) {
+                // code here
+            } else {
+                for (let i = 0; i < response.desktops.length; i++) {
+                    $("#pTimestamp" + i).html("Timestamp: " + response.screenshots.find((cv) => (cv.desktopId == response.desktops[i].desktopId) ? cv : { "timestamp": "no value found" }).timestamp);
+
+                    $("#img" + i).attr("src", "data:image/jpg;base64," + response.screenshots.find((cv) => (cv.desktopId == response.desktops[i].desktopId) ? cv : { "image": "no value found" }).image);
+
+                    $("#pDesktopDevices" + i).html(response.desktops[i].outputDeviceStatus);
+
+                    $("#pDesktopName" + i).html("Desktop Name: " + response.desktops[i].name);
+                }
+            }
+        }
+
+        function InsertResponseDevices(response) {
+            for (let i = 0; i < response.desktops.length; i++) {
+                $("#pDesktopDevices" + i).html(response.desktops[i].outputDeviceStatus);
+
+                $("#pDesktopName" + i).html("Desktop Name: " + response.desktops[i].name);
+            }
+        }
+
+        function InsertResponseStatuses(response) {
+            if (response.desktops.length < 1) {
+                // code here
+            } else {
+                for (let i = 0; i < response.desktops.length; i++) {
+                    // online
+                    if (response.desktops[i].status) {
+                        $("#p" + response.desktops[i].desktopId).html("🟢 Desktop Name: " + response.desktops[i].name);
+                    }
+                    // offline
+                    else {
+                        $("#p" + response.desktops[i].desktopId).html("🔴 Desktop Name: " + response.desktops[i].name);
+                    }
+                }
+            }
+        }
+
+        function Update() {
+            $.ajax({
+                type: "GET",
+                url: "/Home/Lab",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: {
+                    "LabId": $("#LabId").val()
+                },
+                success: function (response) {
+                    console.log(response);
+                    CreateElementsScreenshotsAndDevices(response);
+                    //CreateElementsScreenshots(response);
+                    CreateElementsStatuses(response);
+                },
+                failure: function (response) {
+                    console.log(response.responseText);
+                },
+                error: function (response) {
+                    console.log(response.responseText);
+                }
+            });
+        }
+
+        function CreateElementsScreenshots(response) {
+            if (response.desktops.length < 1) {
+                // code here
+            } else {
+                for (let i = 0; i < response.desktops.length; i++) {
+                    $("#btnGet").after("<p id='pTimestamp" + i + "'>Timestamp: " + response.screenshots.find((cv) => (cv.desktopId == response.desktops[i].desktopId) ? cv : { timestamp: "no value found" }).timestamp + "</p>");
+
+                    $("#btnGet").after("<img id='img" + i + "' src='data:image/jpg;base64," + response.screenshots.find((cv) => (cv.desktopId == response.desktops[i].desktopId) ? cv : { image: "no value found" }).image + "' width='150' height='150'/>");
+
+                    $("#btnGet").after("<p id='pDesktopName" + i + "'>Desktop Name: " + response.desktops[i].name + "</p>");
+                }
+            }
+        }
+
+        function CreateElementsStatuses(response) {
+            if (response.desktops.length > 0) {
+                for (let i = 0; i < response.desktops.length; i++) {
+                    // online
+                    if (response.desktops[i].status) {
+                        $("#btnShutdown").after("<p id='p" + response.desktops[i].desktopId + "'>🟢 Desktop Name: " + response.desktops[i].name + "</p>");
+                    }
+                    // offline
+                    else {
+                        $("#btnShutdown").after("<p id='p" + response.desktops[i].desktopId + "'>🔴 Desktop Name: " + response.desktops[i].name + "</p>");
+                    }
+                }
+            }
+        }
+
+        function CreateElementsScreenshotsAndDevices(response) {
+            if (response.desktops.length < 1) {
+                // code here
+            } else {
+                for (let i = 0; i < response.desktops.length; i++) {
+                    $("#btnGet").after("<p id='pTimestamp" + i + "'>Timestamp: " + response.screenshots.find((cv) => (cv.desktopId == response.desktops[i].desktopId) ? cv : { timestamp: "no value found" }).timestamp + "</p>");
+
+                    $("#btnGet").after("<img id='img" + i + "' src='data:image/jpg;base64," + response.screenshots.find((cv) => (cv.desktopId == response.desktops[i].desktopId) ? cv : { image: "no value found" }).image + "' width='150' height='150'/>");
+
+                    $("#btnGet").after("<p id='pDesktopDevices" + i + "'>" + response.desktops[i].outputDeviceStatus + "</p>");
+
+                    $("#btnGet").after("<p id='pDesktopName" + i + "'>Desktop Name: " + response.desktops[i].name + "</p>");
+
+                }
+            }
+        }
+
+        function CreateAttendance() {
+            $.ajax({
+                type: "POST",
+                url: "/Home/Attendance",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: {
+                    "Class": $("#Class").val()
+                },
+                success: function (response) {
+                    console.log(response);
+                    CreateElement(response);
+                },
+                failure: function (response) {
+                    console.log(response.responseText);
+                },
+                error: function (response) {
+                    console.log(response.responseText);
+                }
+            });
+        }
+
+        function CreateElement(response) {
+            if (response.attendance == null) {
+                alert("Invalid operation: Creating attendance was unsuccessful.");
+            } else {
+                let attendanceId = response.attendance.attendanceId;
+                let session = response.attendance.session;
+                let theClass = response.attendance.class;
+
+                $("#attendances").after("<p id='" + attendanceId + "'>📌 [Class] " + theClass + " [Attendance ID] " + attendanceId + " [Session] " + session + "</p>");
+            }
+        }
+
+        function ReopenAttendance() {
+            $.ajax({
+                type: "POST",
+                url: "/Home/Reopen",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: {
+                    "AttendanceId": $("#AttendanceIdReopen").val()
+                },
+                success: function (response) {
+                    console.log(response);
+                    CreateElementReopen(response);
+                },
+                failure: function (response) {
+                    console.log(response.responseText);
+                },
+                error: function (response) {
+                    console.log(response.responseText);
+                }
+            });
+        }
+
+        function CreateElementReopen(response) {
+            if (response.attendance == null) {
+                alert("Invalid operation: the attendance is either already open or not existed");
+            } else {
+                let attendanceId = response.attendance.attendanceId;
+                let session = response.attendance.session;
+                let theClass = response.attendance.class;
+
+                $("#attendances").after("<p id='" + attendanceId + "'>📌 [Class] " + theClass + " [Attendance ID] " + attendanceId + " [Session] " + session + "</p>");
+            }
+        }
+
+        function CloseAttendance() {
+            $.ajax({
+                type: "POST",
+                url: "/Home/Close",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: {
+                    "AttendanceId": $("#AttendanceIdClose").val()
+                },
+                success: function (response) {
+                    console.log(response);
+                    RemoveElement(response);
+                },
+                failure: function (response) {
+                    console.log(response.responseText);
+                },
+                error: function (response) {
+                    console.log(response.responseText);
+                }
+            });
+        }
+
+        function RemoveElement(response) {
+            if (response.attendance == null) {
+                alert("Invalid operation: the attendance is either already closed or not existed.");
+            } else {
+                $("#" + response.attendance.attendanceId).remove();
+            }
+        }
+
+        function ValidateAndShutdownDesktop(machineName, labId) {
+            $.ajax({
+                type: "GET",
+                url: "/Home/LabInterval",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: {
+                    "LabId": labId
+                },
+                success: function (response) {
+                    let machine = response.desktops.find((machine) => machine.name == machineName);
+
+                    if (machine != null) {
+                        ShutdownDesktop(machine.name);
+                    } else {
+                        alert("Operation failed: the machine isn't in the laboratory.");
+                    }
+                },
+                failure: function (response) {
+                    console.log(response.responseText);
+                },
+                error: function (response) {
+                    console.log(response.responseText);
+                }
+            });
+        }
+
+        // are used as development reference how ajax result is formatted.
+        var a = {
+            "desktops": [
+                {
+                    "desktopId": 1,
+                    "name": "vm1",
+                    "username": "virtualmachine1v2",
+                    "password": "virtualmachine1v2",
+                    "screenshotDirectory": "\\\\vmware-host\\Shared Folders\\Users\\Earth Jan\\Documents\\csharp_files\\csharp_codes\\RemoteScreenshot\\Screenshots\\",
+                    "nircmdDirectory": "C:\\Windows\\System32\\nircmd64\\nircmd.exe",
+                    "userSession": 2,
+                    "tasklistOutputDirectory": "C:\\Users\\Earth Jan\\Documents\\csharp_files\\csharp_codes\\RemoteScreenshot\\TasklistOutputs\\",
+                    "laboratoryDesktops": [],
+                    "screenshots": []
+                }
+            ],
+            "screenshots": [
+                {
+                    "screenshotId": 110,
+                    "desktopId": 1,
+                    "image": "",
+                    "timestamp": "2021-06-08T01:47:16",
+                    "desktop": null
+                }
+            ]
+        };
+        var b = {
+            "desktops": [
+                {
+                    "desktopId": 1,
+                    "name": "vm1",
+                    "username": "virtualmachine1v2",
+                    "password": "virtualmachine1v2",
+                    "screenshotDirectory": "\\\\vmware-host\\Shared Folders\\Users\\Earth Jan\\Documents\\csharp_files\\csharp_codes\\RemoteScreenshot\\Screenshots\\",
+                    "nircmdDirectory": "C:\\Windows\\System32\\nircmd64\\nircmd.exe",
+                    "userSession": 2,
+                    "tasklistOutputDirectory": "C:\\Users\\Earth Jan\\Documents\\csharp_files\\csharp_codes\\RemoteScreenshot\\TasklistOutputs\\",
+                    "laboratoryDesktops": [],
+                    "screenshots": []
+                },
+                {
+                    "desktopId": 9,
+                    "name": "sample",
+                    "username": "sample",
+                    "password": "sample",
+                    "screenshotDirectory": "sample",
+                    "nircmdDirectory": "sample",
+                    "userSession": 9,
+                    "tasklistOutputDirectory": "sample",
+                    "laboratoryDesktops": [],
+                    "screenshots": []
+                }
+            ],
+            "screenshots": [
+                {
+                    "screenshotId": 110,
+                    "desktopId": 1,
+                    "image": "",
+                    "timestamp": "2021-06-08T01:47:16",
+                    "desktop": null
+                }
+            ]
+        };
+    </script>
+}

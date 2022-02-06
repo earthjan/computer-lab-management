@@ -1,0 +1,27 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<form method="post" role="form">
+    @Html.AntiForgeryToken()
+
+    <h4>Your local admin account</h4>
+    <hr />
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    @*username form*@
+    @Html.LabelFor(m => m.LoginModel.Username, new { @class = "col-md-2 control-label" })
+    @Html.TextBoxFor(m => m.LoginModel.Username, new { @class = "form-control px-25 w-50", placeholder = "Username" })
+    @Html.ValidationMessageFor(m => m.LoginModel.Username, "", new { @class = "text-danger" })
+
+    @*password form*@
+    @Html.LabelFor(m => m.LoginModel.Password, new { @class = "col-md-2 control-label" })
+    @Html.PasswordFor(m => m.LoginModel.Password, new { @class = "form-control px-25 w-50", placeholder = "Password" })
+    @Html.ValidationMessageFor(m => m.LoginModel.Password, "", new { @class = "text-danger" })
+
+    @*submit button*@
+    <button asp-page-handler="SignIn" class="btn border border-1 mt-3">Sign in</button>
+</form>

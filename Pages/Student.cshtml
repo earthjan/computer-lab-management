@@ -1,0 +1,27 @@
+﻿@page "{handler?}"
+@model RemoteScreenshot.Pages.StudentModel
+
+<h4>The attendance ID and local student account</h4>
+<hr />
+
+@if (!Model.ErrorAttend.Equals(""))
+{
+    <p style="color:red;">@Model.ErrorAttend</p>
+}
+else if (!Model.SuccessAttend.Equals(""))
+{
+    <p style="color:green;">@Model.SuccessAttend</p>
+}
+
+<form role="form" method="post" asp-page-handler="Attend">
+    <label for="attendanceId">Attendane ID</label>
+    <input class="w-50 form-control" type="text" id="attendanceId" name="attendanceId" placeholder="Attendance ID"/>
+
+    <label for="username">Username</label>
+    <input class="w-50 form-control" type="text" id="username" name="username" placeholder="Username"/>
+
+    <label for="password">Password</label>
+    <input class="w-50 form-control" type="password" id="password" name="password" placeholder="Password"/>
+
+    <button class="btn border border-1 mt-3" type="submit">Attend</button>
+</form>
