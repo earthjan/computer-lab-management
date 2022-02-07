@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RemoteScreenshot.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -57,13 +58,13 @@ namespace RemoteScreenshot.MyProcess
 
                 // remoteDesktops.ForEach((desktop) =>
                 // {
-                //     string apps = AppMonitoring.GetCurrentlyRunningApps(desktop.AppsMonitoringScriptDirectory, desktop.Name, desktop.Username, desktop.Password);
+                //     string apps = AppMonitoring.GetCurrentlyRunningApps(desktop.AppMonitoringScriptDirectory, desktop.Name, desktop.Username, desktop.Password);
 
                 //     bool isUpdated = db.UpdateCurrentlyRunningApps(desktop.DesktopId, apps);
 
                 //     Console.WriteLine($"Done processing {desktop.Name} for monitoring its apps.");
-                    // Console.WriteLine($"    {apps}");
-                    // Console.WriteLine($"    The update was {isUpdated}.");
+                //     Console.WriteLine($"    {apps}");
+                //     Console.WriteLine($"    The update was {isUpdated}.");
                 // });
             }
         }

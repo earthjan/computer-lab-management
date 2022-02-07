@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using RemoteScreenshot;
 using RemoteScreenshot.CleanString;
+using RemoteScreenshot.Models;
 
 namespace RemoteScreenshot.Pages
 {

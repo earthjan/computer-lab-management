@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
+using RemoteScreenshot.Models;
 using static System.Console;
 
 namespace RemoteScreenshot.MyProcess

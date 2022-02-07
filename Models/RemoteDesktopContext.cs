@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace RemoteScreenshot
+namespace RemoteScreenshot.Models
 {
     public partial class RemoteDesktopContext : DbContext
     {

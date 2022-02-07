@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RemoteScreenshot;
 using RemoteScreenshot.CleanString;
+using RemoteScreenshot.Models;
 
 namespace RemoteScreenshot.Pages
 {

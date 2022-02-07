@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RemoteScreenshot.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using static System.Console;
 
-namespace RemoteScreenshot
+namespace RemoteScreenshot.Models
 {
     public partial class RemoteDesktopContext
     {
@@ -354,6 +355,33 @@ namespace RemoteScreenshot
 
                 if (affected < 1)
                     throw new("Updating the remote desktop's output device status failed.");
+                else
+                    return true;
+            }
+            catch (Exception ex)
+            {
+                WriteLine(ex);
+            }
+
+            return false;
+        }
+
+        public bool UpdateCurrentlyRunningApps(int desktopId, string apps)
+        {
+            try
+            {
+                var remoteDesktop = this.Desktops
+                .FromSqlRaw($"SELECT * FROM desktops WHERE desktops.desktop_id = {desktopId}")
+                .Single();
+
+                remoteDesktop.CurrentlyRunningApps = apps;
+
+                this.Desktops.Update(remoteDesktop);
+
+                int affected = this.SaveChanges();
+
+                if (affected < 1)
+                    throw new("Updating the remote desktop's currently running apps failed.");
                 else
                     return true;
             }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
-namespace RemoteScreenshot
+namespace RemoteScreenshot.Models
 {
     [Table("laboratories")]
     public partial class Laboratory

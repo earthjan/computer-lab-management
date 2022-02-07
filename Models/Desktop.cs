@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
-namespace RemoteScreenshot
+namespace RemoteScreenshot.Models
 {
     [Table("desktops")]
     [Index(nameof(Name), Name = "name_UNIQUE", IsUnique = true)]
@@ -61,6 +61,13 @@ namespace RemoteScreenshot
         [Column("output_device_monitoring_script_directory")]
         [StringLength(255)]
         public string OutputDeviceMonitoringScriptDirectory { get; set; }
+        [Required]
+        [Column("currently_running_apps", TypeName = "longtext")]
+        public string CurrentlyRunningApps { get; set; }
+        [Required]
+        [Column("app_monitoring_script_directory")]
+        [StringLength(255)]
+        public string AppMonitoringScriptDirectory { get; set; }
 
         [InverseProperty(nameof(LaboratoryDesktop.Desktop))]
         public virtual ICollection<LaboratoryDesktop> LaboratoryDesktops { get; set; }

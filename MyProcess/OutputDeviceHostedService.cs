@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using RemoteScreenshot;
 using Microsoft.Extensions.DependencyInjection;
+using RemoteScreenshot.Models;
 
 namespace RemoteScreenshot.MyProcess
 {

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
-namespace RemoteScreenshot
+namespace RemoteScreenshot.Models
 {
     [Table("attendance_students")]
     [Index(nameof(AttendanceId), Name = "attendance_id_attendance_students_idx")]
