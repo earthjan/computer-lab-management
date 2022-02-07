@@ -50,6 +50,7 @@ namespace RemoteScreenshot
 
             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
 
+            services.AddHostedService<AppMonitoringHostedService>();
             services.AddHostedService<PingHostedService>();
             services.AddHostedService<OutputDeviceHostedService>();
         }

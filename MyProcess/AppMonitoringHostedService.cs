@@ -54,18 +54,18 @@ namespace RemoteScreenshot.MyProcess
             {
                 var db = scope.ServiceProvider.GetRequiredService<RemoteDesktopContext>();
                 
-                // List<Desktop> remoteDesktops = db.GetAllRemoteDesktops();
+                List<Desktop> remoteDesktops = db.GetAllRemoteDesktops();
 
-                // remoteDesktops.ForEach((desktop) =>
-                // {
-                //     string apps = AppMonitoring.GetCurrentlyRunningApps(desktop.AppMonitoringScriptDirectory, desktop.Name, desktop.Username, desktop.Password);
+                remoteDesktops.ForEach((desktop) =>
+                {
+                    string apps = AppMonitoring.GetCurrentlyRunningApps(desktop.AppMonitoringScriptDirectory, desktop.Name, desktop.Username, desktop.Password);
 
-                //     bool isUpdated = db.UpdateCurrentlyRunningApps(desktop.DesktopId, apps);
+                    bool isUpdated = db.UpdateCurrentlyRunningApps(desktop.DesktopId, apps);
 
-                //     Console.WriteLine($"Done processing {desktop.Name} for monitoring its apps.");
-                //     Console.WriteLine($"    {apps}");
-                //     Console.WriteLine($"    The update was {isUpdated}.");
-                // });
+                    Console.WriteLine($"Done processing {desktop.Name} for monitoring its apps.");
+                    Console.WriteLine($"    {apps}");
+                    Console.WriteLine($"    The update was {isUpdated}.");
+                });
             }
         }
     }
