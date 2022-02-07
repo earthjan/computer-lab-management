@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -11,11 +12,11 @@ using static System.Console;
 
 namespace RemoteScreenshot.MyProcess
 {
-    public class PingHostedService : BackgroundService
+    public class AppMonitoringHostedService : BackgroundService
     {
         public IServiceProvider Services { get; }
 
-        public PingHostedService(IServiceProvider services)
+        public AppMonitoringHostedService(IServiceProvider services)
         {
             this.Services = services;
         }
@@ -28,7 +29,7 @@ namespace RemoteScreenshot.MyProcess
 
                 try
                 {
-                    StartPingHost(this.Services);
+                    StartMonitoring(this.Services);
 
                     // actually, IDK why I put a delay here as the main delay timer. However, this delays the hosted service before running again.
                     await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
@@ -46,32 +47,24 @@ namespace RemoteScreenshot.MyProcess
             await base.StopAsync(cancellationToken);
         }
 
-        public static void StartPingHost(IServiceProvider services)
+        public void StartMonitoring(IServiceProvider services)
         {
             using (var scope = services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<RemoteDesktopContext>();
+                
+                // List<Desktop> remoteDesktops = db.GetAllRemoteDesktops();
 
-                var pingSender = new Ping();
-                var pingOptions = new PingOptions(128, true);
+                // remoteDesktops.ForEach((desktop) =>
+                // {
+                //     string apps = AppMonitoring.GetCurrentlyRunningApps(desktop.AppsMonitoringScriptDirectory, desktop.Name, desktop.Username, desktop.Password);
 
-                List<Desktop> remoteDesktops = db.GetAllRemoteDesktops();
+                //     bool isUpdated = db.UpdateCurrentlyRunningApps(desktop.DesktopId, apps);
 
-                remoteDesktops.ForEach((desktop) =>
-                {
-                    PingReply reply = pingSender.Send(desktop.IpAddress);
-
-                    if (reply.Status == IPStatus.Success)
-                    {
-                        WriteLine("Ping successed for desktopID: {0}", desktop.DesktopId);
-                        db.UpdateDesktopStatus(desktop.DesktopId, 1);
-                    }
-                    else
-                    {
-                        WriteLine("Ping failed for desktopID: {0}", desktop.DesktopId);
-                        db.UpdateDesktopStatus(desktop.DesktopId, 0);
-                    }
-                });
+                //     Console.WriteLine($"Done processing {desktop.Name} for monitoring its apps.");
+                    // Console.WriteLine($"    {apps}");
+                    // Console.WriteLine($"    The update was {isUpdated}.");
+                // });
             }
         }
     }

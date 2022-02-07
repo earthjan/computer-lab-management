@@ -12,8 +12,8 @@ namespace RemoteScreenshot
         /// </summary>
         /// <param name="scriptPath">the path of the powershell script that includes the file and its extension.</param>
         /// <param name="machineName">the remote computer's desktop name.</param>
-        /// <param name="username">the remote computer's elevated account username</param>
-        /// <param name="password">the remote computer's elevated account password</param>
+        /// <param name="username">the remote computer account username</param>
+        /// <param name="password">the remote computer account password</param>
         /// <returns></returns>
         public static string GetOutputDeviceStatus(string scriptPath, string machineName, string username, string password)
         {
