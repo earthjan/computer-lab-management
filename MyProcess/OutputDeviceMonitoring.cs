@@ -24,7 +24,7 @@ namespace RemoteScreenshot
                 var p = new Process();
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.RedirectStandardOutput = true;
-                p.StartInfo.FileName = "psexec.exe";
+                p.StartInfo.FileName = "psexec64.exe";
                 p.StartInfo.Arguments = $"\\\\{machineName} -u {username} -p {password} -i cmd /c \"powershell -noninteractive -file \"{scriptPath}\"\"";
 
                 // in asynchronous way, reads the Process's stream, and writes it on StringBuilder.
