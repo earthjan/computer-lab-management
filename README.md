@@ -29,6 +29,8 @@ The website has several abilities. It can monitor the output devices of units re
         * admin_configs
         * desktops
     3. Insert values to all non-null columns. Check the imported DB.
+    4. Have a system variable with a value of connection string used by the site for the DB connection, and then reference the variable at [Configs.Variable](https://github.com/earthjan/computer-lab-management/blob/f75326051f5f0512a4ec899ec1adcc3542b9058d/Configs.cs#L10).
+        * The connection string format that I've only used is `server=[host_ip];database=[database_name];username=[username];password=[password]`. You can test other valid formats.
 * Reserve the computer IP addresses
     * The website needs its clients to have distinct IP addresses for certain features, such as designating a student to a particular unit. To ensure that, you can consider reserving the IP addresses, especially if you have a router with an automatic IP address system.
     * This mainly applies to a large number of computers, so let's say that if you have a single client, then you can skip this.
