@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "qlMoZNmg6LkriSiTvFhRxrdPKUBvbIqqFE/jhRbbRyclHnoAqgkWlKq6bR2+g7rMhoZ2gwGqNueqOvnobDhFbw==",
+  "dgSpecHash": "IlIJikNwFTTU5Ptl1J8LfgancgLliFLPdnMwt9nAmv5zC/iq5/RTWQ77JXjw6mNaLJQsIiTjiXH4UZg5a3a3fw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Earth Jan\\Documents\\csharp_files\\csharp_codes\\RemoteScreenshot\\RemoteScreenshot.csproj",
+  "projectFilePath": "C:\\Users\\Earth Jan\\Documents\\Git\\Repos\\computer-lab-management\\RemoteScreenshot.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Earth Jan\\.nuget\\packages\\bouncycastle.netcore\\1.8.5\\bouncycastle.netcore.1.8.5.nupkg.sha512",
     "C:\\Users\\Earth Jan\\.nuget\\packages\\google.protobuf\\3.14.0\\google.protobuf.3.14.0.nupkg.sha512",

@@ -2285,11 +2285,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Earth Jan\\Documents\\csharp_files\\csharp_codes\\RemoteScreenshot\\RemoteScreenshot.csproj",
+      "projectUniqueName": "C:\\Users\\Earth Jan\\Documents\\Git\\Repos\\computer-lab-management\\RemoteScreenshot.csproj",
       "projectName": "RemoteScreenshot",
-      "projectPath": "C:\\Users\\Earth Jan\\Documents\\csharp_files\\csharp_codes\\RemoteScreenshot\\RemoteScreenshot.csproj",
+      "projectPath": "C:\\Users\\Earth Jan\\Documents\\Git\\Repos\\computer-lab-management\\RemoteScreenshot.csproj",
       "packagesPath": "C:\\Users\\Earth Jan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Earth Jan\\Documents\\csharp_files\\csharp_codes\\RemoteScreenshot\\obj\\",
+      "outputPath": "C:\\Users\\Earth Jan\\Documents\\Git\\Repos\\computer-lab-management\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Earth Jan\\AppData\\Roaming\\NuGet\\NuGet.Config",
