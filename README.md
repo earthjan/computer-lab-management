@@ -24,8 +24,7 @@ The website has several abilities. It can monitor the output devices of units re
         * If `HTTP Error 500.19` occurs, you might have a permission issue with the application pool. Try this solution from andy [HTTP Error 500.19 - Internal Server Error when publishing ASP.Net Core Web API to IIS Server](https://bytutorial.com/blogs/asp-net-core/http-error-50019---internal-server-error-when-publishing-aspnet-core-web-api-to-iis-server).
         * Set the inbound rules from your firewall for external requests.
 * Configuring the DB server
-    1. Import the DB 
-        * ❌*put a relative link here for the schema file*.
+    1. Import the [DB](Database/remote_desktop.sql)
     2. Insert directories in the columns that have *directory* in their names. You can find the columns in the ff tables, and also take note that the directories are relative to your machine:
         * admin_configs
         * desktops
